@@ -1,0 +1,5 @@
+# Ignore a specific file
+tanvikarma19_db_user.md
+
+# Ignore node_modules folder
+node_modules/
