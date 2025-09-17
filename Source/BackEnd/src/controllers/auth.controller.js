@@ -20,7 +20,7 @@ async function registerUser(req, res) {
     const user = await userModel.create({
         fullName,
         email,
-        password: hashedPassword
+        password: hashedPassword,
     })
 
     const token = jwt.sign({
@@ -85,7 +85,9 @@ function logoutUser(req, res) {
 
 async function registerFoodPartner(req, res) {
     
-    const { name, email, password } = req.body;
+
+    const { name, email, password, phone, address, contectName } = req.body;
+
 
     const isAccountAlreadyExists = await foodPartnerModel.findOne({ email });
 
@@ -100,7 +102,12 @@ async function registerFoodPartner(req, res) {
     const foodpartner = await foodPartnerModel.create({
         name,
         email,
-        password: hashedPassword
+
+        password: hashedPassword,
+        phone,
+        address,
+        contectName
+
     });
 
     const token = jwt.sign(
@@ -115,7 +122,12 @@ async function registerFoodPartner(req, res) {
         foodpartner: {
             _id: foodpartner._id,
             email: foodpartner.email,
-            name: foodpartner.name
+
+            name: foodpartner.name,
+            address,
+            contectName,
+            phone
+
         }
     });
 }
@@ -127,10 +139,12 @@ async function loginFoodPartner(req, res) {
         email
     })
 
-    if(foodPartner) {
-        return res.status(400),json({
-            Message:"Invalid user or email"
-        })
+
+        if(!foodPartner) {
+        return res.status(400).json({
+            Message: "Invalid user or email"
+        });
+
     }
 
     const isPasswordValid = await bcrypt.compare(password, foodPartner.password)
@@ -157,11 +171,13 @@ async function loginFoodPartner(req, res) {
     })
 }
 
-function logoutFoodPartner(res, req) {
+
+function logoutFoodPartner(req, res) {
     res.clearCookie("token");
     res.status(200).json({
         Message: "FoodPartner logged out successfully"
-    })
+    });
+
 }
 
 module.exports = {
